@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.util.concurrent.AbstractService;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
+import java.net.InetSocketAddress;
 
 import org.forgerock.opendj.ldap.*;
 import org.forgerock.opendj.ldif.LDIFEntryReader;
@@ -79,5 +79,9 @@ public class EmbeddedServer extends AbstractService {
         public int read() throws IOException {
             return -1;
         }
+    }
+
+    public InetSocketAddress getSocketAddress() {
+        return (InetSocketAddress)listener.getSocketAddress();
     }
 }
