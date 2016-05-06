@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.util.concurrent.AbstractService;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 
 import org.forgerock.opendj.ldap.*;
 import org.forgerock.opendj.ldif.LDIFEntryReader;
@@ -16,20 +18,38 @@ public class EmbeddedServer extends AbstractService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmbeddedServer.class);
 
+    /**
+     * TCP port number to listen.
+     */
     private final int port;
+
+    /**
+     * LDAP server listener.
+     */
     private LDAPListener listener;
 
+    /**
+     * Reader which provides initial data in LDIF format.
+     */
+    private final InputStream ldifSource;
+
     public EmbeddedServer(int port) {
+        this(port, new EmptyStream());
+    }
+
+    public EmbeddedServer(int port, InputStream ldifSource) {
         this.port = port;
+        this.ldifSource = ldifSource;
     }
 
     @Override
     protected void doStart() {
         LOGGER.debug("Starting new embedded LDAP server on port; {}", port);
-        final RequestHandler<RequestContext> requestHandler = new MemoryBackend();
-
-        final ServerConnectionFactory<LDAPClientContext, Integer> connectionFactory = Connections.newServerConnectionFactory(requestHandler);
         try {
+            final LDIFEntryReader entryReader = new LDIFEntryReader(ldifSource);
+            final RequestHandler<RequestContext> requestHandler = new MemoryBackend(entryReader);
+            final ServerConnectionFactory<LDAPClientContext, Integer> connectionFactory = Connections.newServerConnectionFactory(requestHandler);
+
             listener = new LDAPListener(port, connectionFactory);
             notifyStarted();
         } catch (IOException e) {
@@ -45,4 +65,19 @@ public class EmbeddedServer extends AbstractService {
         notifyStopped();
     }
 
+    /**
+     * An implementation of {@link InputStream}, which is always empty.
+     */
+    private static class EmptyStream extends InputStream {
+
+        @Override
+        public void close() throws IOException {
+            // NOP;
+        }
+
+        @Override
+        public int read() throws IOException {
+            return -1;
+        }
+    }
 }

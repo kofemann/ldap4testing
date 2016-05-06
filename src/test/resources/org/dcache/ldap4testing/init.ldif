@@ -1,0 +1,23 @@
+dn: ou=People,dc=dcache,dc=org
+ou: People
+objectclass: organizationalUnit
+
+dn: uid=kermit,ou=people,dc=dcache,dc=org
+objectClass: posixAccount
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: top
+uid: kermit
+description: This is the description for Kermit the Frog
+userPassword: kermitTheFrog
+employeeNumber: 1
+initials: kTf
+givenName: Kermit
+cn: Kermit The Frog
+sn: Frog
+mail: kermit.the.frog@dcache.org
+l: Hamburg
+st: DE
+gidNumber: 1000
+homeDirectory: /home/kermit
+uidNumber: 1000
