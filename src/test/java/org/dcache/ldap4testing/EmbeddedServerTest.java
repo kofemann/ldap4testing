@@ -1,10 +1,7 @@
 package org.dcache.ldap4testing;
 
-import com.google.common.io.Resources;
 import com.google.common.util.concurrent.Service;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
