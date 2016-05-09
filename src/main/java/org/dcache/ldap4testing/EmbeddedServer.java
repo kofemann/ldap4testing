@@ -1,5 +1,6 @@
 package org.dcache.ldap4testing;
 
+import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +80,19 @@ public class EmbeddedServer extends AbstractService {
         public int read() throws IOException {
             return -1;
         }
+    }
+
+    public void start() throws IOException {
+        this.startAsync().awaitRunning();
+        if (state() == State.FAILED) {
+            Throwable t = this.failureCause();
+            Throwables.propagateIfInstanceOf(t, IOException.class;
+            Throwables.propagate(t)
+        }
+    }
+
+    public void stop() {
+        this.stopAsync().awaitTerminated();
     }
 
     public InetSocketAddress getSocketAddress() {

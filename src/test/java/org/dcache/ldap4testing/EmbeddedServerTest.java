@@ -24,31 +24,27 @@ public class EmbeddedServerTest {
     @After
     public void shutdown() {
         if (server != null && server.state() != Service.State.TERMINATED) {
-            server.stopAsync().awaitTerminated();
-            assertNotFailed(server);
+            server.stop();
         }
     }
 
     @Test
-    public void testStaringAndStopServer() {
+    public void testStaringAndStopServer() throws IOException {
         server = new EmbeddedServer(0);
 
-        server.startAsync().awaitRunning();
-        assertNotFailed(server);
+        server.start();
         assertEquals("Embedded LDAP server failed to start", Service.State.RUNNING, server.state());
 
-        server.stopAsync().awaitTerminated();
-        assertNotFailed(server);
+        server.stop();
         assertEquals("Embedded LDAP server failed to stop", Service.State.TERMINATED, server.state());
     }
 
     @Test
-    public void testServerWithLdiffFile() {
+    public void testServerWithLdiffFile() throws IOException {
         InputStream initialLdif = ClassLoader.getSystemResourceAsStream("org/dcache/ldap4testing/init.ldif");
         server = new EmbeddedServer(0, initialLdif);
 
-        server.startAsync().awaitRunning();
-        assertNotFailed(server);
+        server.start();
         assertEquals("Embedded LDAP server failed to start", Service.State.RUNNING, server.state());
     }
 
@@ -56,17 +52,11 @@ public class EmbeddedServerTest {
     public void testQueryAfterInit() throws NamingException, ErrorResultException, IOException {
         InputStream initialLdif = ClassLoader.getSystemResourceAsStream("org/dcache/ldap4testing/init.ldif");
         server = new EmbeddedServer(0, initialLdif);
-        server.startAsync().awaitRunning();
+        server.start();
 
         LdapClient c = new LdapClient(server.getSocketAddress().getPort());
         String v = c.search("ou=people,o=dcache,c=org", "(uid=kermit)", "uidNumber");
         assertEquals("Unexpected result:", "1000", v);
-    }
-
-    private void assertNotFailed(EmbeddedServer server) {
-        if (server.state() == Service.State.FAILED) {
-            fail(server.failureCause().toString());
-        }
     }
 
     private static class LdapClient {

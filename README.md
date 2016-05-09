@@ -23,20 +23,21 @@ public class TestWithLdap {
     public void setUp() {
         InputStream initialLdif = ClassLoader.getSystemResourceAsStream("org/dcache/ldap4testing/init.ldif");
         server = new EmbeddedServer(1369, initialLdif);
-        server.startAsync().awaitRunning();
+        server.start();
 
-            Properties env = new Properties();
-            env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-            env.put(Context.PROVIDER_URL, String.format("ldap://localhost:%d/", port));
-            env.put(Context.SECURITY_AUTHENTICATION, "simple");
-            env.put(Context.SECURITY_PRINCIPAL, "uid=kermit,ou=people,o=dcache,c=org");
-            env.put(Context.SECURITY_CREDENTIALS, "kermitTheFrog");
-            ctx = new InitialDirContext(env);
+        Properties env = new Properties();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.PROVIDER_URL, String.format("ldap://localhost:%d/", port));
+        env.put(Context.SECURITY_AUTHENTICATION, "simple");
+        env.put(Context.SECURITY_PRINCIPAL, "uid=kermit,ou=people,o=dcache,c=org");
+        env.put(Context.SECURITY_CREDENTIALS, "kermitTheFrog");
+        ctx = new InitialDirContext(env);
+
     }
 
     @After
     public void tearDown() {
-         server.stopAsync().awaitTerminated();
+         server.stop();
     }
 
     @Test
@@ -50,4 +51,4 @@ public class TestWithLdap {
 }
 ```
 
-Check the [example ldif file](src/test/resources/org/dcache/ldap4testing/init.ldif) for details
+Check the [example ldif file](src/test/resources/org/dcache/ldap4testing/init.ldif) for details.
