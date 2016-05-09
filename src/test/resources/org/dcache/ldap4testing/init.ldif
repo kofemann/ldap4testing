@@ -1,8 +1,14 @@
-dn: ou=People,dc=dcache,dc=org
-ou: People
-objectclass: organizationalUnit
+dn: o=dcache,c=org
+dc: o=dcache
+objectClass: top
+objectClass: domain
 
-dn: uid=kermit,ou=people,dc=dcache,dc=org
+dn: ou=people,o=dcache,c=org
+ou: people
+objectClass: top
+objectclass: organizationalunit
+
+dn: uid=kermit,ou=people,o=dcache,c=org
 objectClass: posixAccount
 objectClass: inetorgperson
 objectClass: organizationalperson
