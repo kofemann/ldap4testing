@@ -21,7 +21,8 @@ public class TestWithLdap {
 
    @Before
     public void setUp() {
-        InputStream initialLdif = ClassLoader.getSystemResourceAsStream("org/dcache/ldap4testing/init.ldif");
+        InputStream initialLdif =
+                ClassLoader.getSystemResourceAsStream("org/dcache/ldap4testing/init.ldif");
         server = new EmbeddedServer(1369, initialLdif);
         server.start();
 
