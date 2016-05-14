@@ -55,8 +55,12 @@ public class EmbeddedServerTest {
         server.start();
 
         LdapClient c = new LdapClient(server.getSocketAddress().getPort());
-        String v = c.search("ou=people,o=dcache,c=org", "(uid=kermit)", "uidNumber");
-        assertEquals("Unexpected result:", "1000", v);
+        String v1 = c.search("ou=people,o=dcache,c=org", "(uid=kermit)", "uidNumber");
+        assertEquals("Unexpected result:", "1000", v1);
+
+        String v2 = c.search("ou=people,o=dcache,c=org", "(uid=bernd)", "uidNumber");
+        assertEquals("Unexpected result:", "1001", v2);
+
     }
 
     private static class LdapClient {

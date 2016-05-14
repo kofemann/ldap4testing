@@ -27,3 +27,23 @@ st: DE
 gidNumber: 1000
 homeDirectory: /home/kermit
 uidNumber: 1000
+
+dn: uid=bernd,ou=people,o=dcache,c=org
+objectClass: posixAccount
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: top
+uid: bernd
+description: This is the description for Bernd das Brot
+userPassword: berndDasBrot
+employeeNumber: 2
+initials: BdB
+givenName: Bernd
+cn: Bernd das Brot
+sn: Brot
+mail: bernd.das.brot@dcache.org
+l: Hamburg
+st: DE
+gidNumber: 1000
+homeDirectory: /home/bernd
+uidNumber: 1001
