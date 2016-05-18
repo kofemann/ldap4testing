@@ -8,6 +8,11 @@ ou: people
 objectClass: top
 objectclass: organizationalunit
 
+dn: ou=group,o=dcache,c=org
+ou: group
+objectClass: top
+objectclass: organizationalunit
+
 dn: uid=kermit,ou=people,o=dcache,c=org
 objectClass: posixAccount
 objectClass: inetorgperson
@@ -47,3 +52,13 @@ st: DE
 gidNumber: 1000
 homeDirectory: /home/bernd
 uidNumber: 1001
+
+
+dn: cn=actor,ou=group,o=dcache,c=org
+objectClass: groupOfUniqueNames
+objectClass: posixGroup
+objectClass: top
+cn: actor
+uniqueMember: uid=bernd,ou=people,o=dcache,c=org
+uniqueMember: uid=kermit,ou=people,o=dcache,c=org
+gidNumber: 1001

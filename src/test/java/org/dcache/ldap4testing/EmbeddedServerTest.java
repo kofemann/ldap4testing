@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.directory.BasicAttributes;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
@@ -49,7 +50,7 @@ public class EmbeddedServerTest {
     }
 
     @Test
-    public void testQueryAfterInit() throws NamingException, ErrorResultException, IOException {
+    public void testQueryUserAfterInit() throws NamingException, ErrorResultException, IOException {
         InputStream initialLdif = ClassLoader.getSystemResourceAsStream("org/dcache/ldap4testing/init.ldif");
         server = new EmbeddedServer(0, initialLdif);
         server.start();
@@ -60,7 +61,17 @@ public class EmbeddedServerTest {
 
         String v2 = c.search("ou=people,o=dcache,c=org", "(uid=bernd)", "uidNumber");
         assertEquals("Unexpected result:", "1001", v2);
+    }
 
+    @Test
+    public void testQueryGroupAfterInit() throws NamingException, ErrorResultException, IOException {
+        InputStream initialLdif = ClassLoader.getSystemResourceAsStream("org/dcache/ldap4testing/init.ldif");
+        server = new EmbeddedServer(0, initialLdif);
+        server.start();
+
+        LdapClient c = new LdapClient(server.getSocketAddress().getPort());
+        String v = c.search("ou=group,o=dcache,c=org", "(cn=actor)",  "gidNumber");
+        assertEquals("Unexpected result:", "1001", v);
     }
 
     private static class LdapClient {
