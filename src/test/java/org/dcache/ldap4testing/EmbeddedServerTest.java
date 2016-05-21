@@ -3,14 +3,16 @@ package org.dcache.ldap4testing;
 import com.google.common.util.concurrent.Service;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import javax.naming.Context;
 import org.junit.After;
 import org.junit.Test;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.directory.BasicAttributes;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
@@ -70,8 +72,19 @@ public class EmbeddedServerTest {
         server.start();
 
         LdapClient c = new LdapClient(server.getSocketAddress().getPort());
-        String v = c.search("ou=group,o=dcache,c=org", "(cn=actor)",  "gidNumber");
+        String v = c.search("ou=group,o=dcache,c=org", "(cn=actor)", "gidNumber");
         assertEquals("Unexpected result:", "1001", v);
+    }
+
+    @Test
+    public void testGroupMembership() throws NamingException, ErrorResultException, IOException {
+        InputStream initialLdif = ClassLoader.getSystemResourceAsStream("org/dcache/ldap4testing/init.ldif");
+        server = new EmbeddedServer(0, initialLdif);
+        server.start();
+
+        LdapClient c = new LdapClient(server.getSocketAddress().getPort());
+        Collection<String> res = c.searchCollection("ou=group,o=dcache,c=org", "(cn=actor)", "uniqueMember");
+        assertEquals("Unexpected result:", 2, res.size());
     }
 
     private static class LdapClient {
@@ -92,6 +105,32 @@ public class EmbeddedServerTest {
             NamingEnumeration<SearchResult> ne = _ctx.search(tree, filter,
                     getSimplSearchControls(attr));
             return String.valueOf(ne.next().getAttributes().get(attr).get());
+        }
+
+        Collection<String> searchCollection(String tree, String filter, String attr) throws NamingException {
+            NamingEnumeration<SearchResult> ne = _ctx.search(tree, filter,
+                    getSimplSearchControls(attr));
+
+            return Collections.list(ne).stream()
+                    .map(SearchResult::getAttributes)
+                    .map(a -> {
+                        return a.getAll();
+                    })
+                    .flatMap(c -> {
+                        return Collections.list(c).stream();
+                    })
+                    .map(a -> {
+                        try {
+                            return a.getAll();
+                        } catch (NamingException e) {
+                            return Collections.enumeration(Collections.emptyList());
+                        }
+                    })
+                    .flatMap(c -> {
+                        return Collections.list(c).stream();
+                    })
+                    .map(Object::toString)
+                    .collect(Collectors.toList());
         }
 
         private SearchControls getSimplSearchControls(String... attr) {
