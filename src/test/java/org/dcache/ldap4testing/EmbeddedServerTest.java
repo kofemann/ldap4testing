@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Properties;
 import java.util.stream.Collectors;
-import javax.naming.Context;
 import org.junit.After;
 import org.junit.Test;
 
@@ -57,7 +55,7 @@ public class EmbeddedServerTest {
         server = new EmbeddedServer(0, initialLdif);
         server.start();
 
-        LdapClient c = new LdapClient(server.getSocketAddress().getPort());
+        LdapClient c = new LdapClient(server);
         String v1 = c.search("ou=people,o=dcache,c=org", "(uid=kermit)", "uidNumber");
         assertEquals("Unexpected result:", "1000", v1);
 
@@ -71,7 +69,7 @@ public class EmbeddedServerTest {
         server = new EmbeddedServer(0, initialLdif);
         server.start();
 
-        LdapClient c = new LdapClient(server.getSocketAddress().getPort());
+        LdapClient c = new LdapClient(server);
         String v = c.search("ou=group,o=dcache,c=org", "(cn=actor)", "gidNumber");
         assertEquals("Unexpected result:", "1001", v);
     }
@@ -82,7 +80,7 @@ public class EmbeddedServerTest {
         server = new EmbeddedServer(0, initialLdif);
         server.start();
 
-        LdapClient c = new LdapClient(server.getSocketAddress().getPort());
+        LdapClient c = new LdapClient(server);
         Collection<String> res = c.searchCollection("ou=group,o=dcache,c=org", "(cn=actor)", "uniqueMember");
         assertEquals("Unexpected result:", 2, res.size());
     }
@@ -91,14 +89,8 @@ public class EmbeddedServerTest {
 
         private final InitialDirContext _ctx;
 
-        LdapClient(int port) throws NamingException {
-            Properties env = new Properties();
-            env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-            env.put(Context.PROVIDER_URL, String.format("ldap://localhost:%d/", port));
-            env.put(Context.SECURITY_AUTHENTICATION, "simple");
-            env.put(Context.SECURITY_PRINCIPAL, "uid=kermit,ou=people,o=dcache,c=org");
-            env.put(Context.SECURITY_CREDENTIALS, "kermitTheFrog");
-            _ctx = new InitialDirContext(env);
+        LdapClient(EmbeddedServer server) throws NamingException {
+            _ctx = server.getDirContext("uid=kermit,ou=people,o=dcache,c=org", "kermitTheFrog");
         }
 
         String search(String tree, String filter, String attr) throws NamingException {

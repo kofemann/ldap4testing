@@ -8,6 +8,10 @@ import com.google.common.util.concurrent.AbstractService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.util.Properties;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.directory.InitialDirContext;
 
 import org.forgerock.opendj.ldap.*;
 import org.forgerock.opendj.ldif.LDIFEntryReader;
@@ -97,5 +101,23 @@ public class EmbeddedServer extends AbstractService {
 
     public InetSocketAddress getSocketAddress() {
         return (InetSocketAddress)listener.getSocketAddress();
+    }
+
+    /**
+     * Get {@link InitialDirContext} to connected to this LDAP server
+     * @param dn LDAP user used to connect to the server
+     * @param pass user's password
+     * @return directory context
+     * @throws NamingException
+     */
+    public InitialDirContext getDirContext(String dn, String pass) throws NamingException {
+        Properties env = new Properties();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.PROVIDER_URL, String.format("ldap://localhost:%d/",
+                getSocketAddress().getPort()));
+        env.put(Context.SECURITY_AUTHENTICATION, "simple");
+        env.put(Context.SECURITY_PRINCIPAL, dn);
+        env.put(Context.SECURITY_CREDENTIALS, pass);
+        return new InitialDirContext(env);
     }
 }
