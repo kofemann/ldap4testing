@@ -90,8 +90,8 @@ public class EmbeddedServer extends AbstractService {
         this.startAsync().awaitRunning();
         if (state() == State.FAILED) {
             Throwable t = this.failureCause();
-            Throwables.propagateIfInstanceOf(t, IOException.class);
-            Throwables.propagate(t);
+            Throwables.throwIfInstanceOf(t, IOException.class);
+            Throwables.throwIfUnchecked(t);
         }
     }
 
