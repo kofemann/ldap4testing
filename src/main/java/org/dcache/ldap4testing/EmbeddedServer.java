@@ -87,8 +87,9 @@ public class EmbeddedServer extends AbstractService {
     }
 
     public void start() throws IOException {
-        this.startAsync().awaitRunning();
-        if (state() == State.FAILED) {
+        try {
+            this.startAsync().awaitRunning();
+        } catch (IllegalStateException e) {
             Throwable t = this.failureCause();
             Throwables.throwIfInstanceOf(t, IOException.class);
             Throwables.throwIfUnchecked(t);
