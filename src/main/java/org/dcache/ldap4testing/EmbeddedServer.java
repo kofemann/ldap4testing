@@ -12,6 +12,7 @@ import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.directory.InitialDirContext;
+import javax.naming.ldap.InitialLdapContext;
 
 import org.forgerock.opendj.ldap.*;
 import org.forgerock.opendj.ldif.LDIFEntryReader;
@@ -116,9 +117,11 @@ public class EmbeddedServer extends AbstractService {
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, String.format("ldap://localhost:%d/",
                 getSocketAddress().getPort()));
+        env.put("com.sun.jndi.ldap.connect.pool", "true");
+        env.put("com.sun.jndi.ldap.connect.pool.maxsize", "10");
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
         env.put(Context.SECURITY_PRINCIPAL, dn);
         env.put(Context.SECURITY_CREDENTIALS, pass);
-        return new InitialDirContext(env);
+        return new InitialLdapContext(env, null);
     }
 }
