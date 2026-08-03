@@ -16,8 +16,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <java.version>17</java.version>
     </properties>
 
     <build>
@@ -25,7 +24,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.8.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -60,7 +59,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>3.3.1</version>
                     <configuration>
                         <pushChanges>false</pushChanges>
                         <localCheckout>true</localCheckout>
@@ -72,9 +71,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.forgerock.opendj</groupId>
-            <artifactId>opendj-ldap-sdk</artifactId>
-            <version>2.6.11</version>
+            <groupId>org.openidentityplatform.opendj</groupId>
+            <artifactId>opendj-core</artifactId>
+            <version>5.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openidentityplatform.opendj</groupId>
+            <artifactId>opendj-grizzly</artifactId>
+            <version>5.1.2</version>
         </dependency>
 
         <dependency>
@@ -92,7 +96,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>28.1-jre</version>
+            <version>33.6.0-jre</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -103,7 +107,7 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
-            <version>2.1</version>
+            <version>3.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -112,27 +116,5 @@
             <version>2.33</version>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>thirdparty</id>
-            <url>https://download.dcache.org/nexus/content/repositories/thirdparty</url>
-        </repository>
-        <repository>
-            <id>dcache.repository</id>
-            <url>https://download.dcache.org/nexus/content/groups/public</url>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>dcache.org</id>
-            <url>https://download.dcache.org/nexus/content/repositories/releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>dcache.org-snapshot</id>
-            <url>https://download.dcache.org/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 
 </project>

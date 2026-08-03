@@ -14,7 +14,6 @@ import javax.naming.NamingException;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
-import org.forgerock.opendj.ldap.ErrorResultException;
 
 import static org.junit.Assert.*;
 
@@ -50,7 +49,7 @@ public class EmbeddedServerTest {
     }
 
     @Test
-    public void testQueryUserAfterInit() throws NamingException, ErrorResultException, IOException {
+    public void testQueryUserAfterInit() throws NamingException, IOException {
         InputStream initialLdif = ClassLoader.getSystemResourceAsStream("org/dcache/ldap4testing/init.ldif");
         server = new EmbeddedServer(0, initialLdif);
         server.start();
@@ -64,7 +63,7 @@ public class EmbeddedServerTest {
     }
 
     @Test
-    public void testQueryGroupAfterInit() throws NamingException, ErrorResultException, IOException {
+    public void testQueryGroupAfterInit() throws NamingException, IOException {
         InputStream initialLdif = ClassLoader.getSystemResourceAsStream("org/dcache/ldap4testing/init.ldif");
         server = new EmbeddedServer(0, initialLdif);
         server.start();
@@ -75,7 +74,7 @@ public class EmbeddedServerTest {
     }
 
     @Test
-    public void testGroupMembership() throws NamingException, ErrorResultException, IOException {
+    public void testGroupMembership() throws NamingException, IOException {
         InputStream initialLdif = ClassLoader.getSystemResourceAsStream("org/dcache/ldap4testing/init.ldif");
         server = new EmbeddedServer(0, initialLdif);
         server.start();

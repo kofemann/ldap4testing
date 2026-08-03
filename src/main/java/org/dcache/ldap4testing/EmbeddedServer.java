@@ -1,6 +1,11 @@
 package org.dcache.ldap4testing;
 
+import static org.forgerock.opendj.ldap.CommonLDAPOptions.LDAP_DECODE_OPTIONS;
+import static org.forgerock.opendj.ldap.LDAPListener.CONNECT_MAX_BACKLOG;
+
+import com.forgerock.reactive.ServerConnectionFactoryAdapter;
 import com.google.common.base.Throwables;
+import org.forgerock.util.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,11 +57,14 @@ public class EmbeddedServer extends AbstractService {
     protected void doStart() {
         LOGGER.debug("Starting new embedded LDAP server on port; {}", port);
         try {
+
+            final Options options = Options.defaultOptions().set(CONNECT_MAX_BACKLOG, 4096);
+
             final LDIFEntryReader entryReader = new LDIFEntryReader(ldifSource);
             final RequestHandler<RequestContext> requestHandler = new MemoryBackend(entryReader);
             final ServerConnectionFactory<LDAPClientContext, Integer> connectionFactory = Connections.newServerConnectionFactory(requestHandler);
 
-            listener = new LDAPListener(port, connectionFactory);
+            listener = new LDAPListener(port, new ServerConnectionFactoryAdapter(options.get(LDAP_DECODE_OPTIONS), connectionFactory), options);
             notifyStarted();
         } catch (IOException e) {
             notifyFailed(e);
@@ -102,7 +110,7 @@ public class EmbeddedServer extends AbstractService {
     }
 
     public InetSocketAddress getSocketAddress() {
-        return (InetSocketAddress)listener.getSocketAddress();
+        return (InetSocketAddress)listener.getSocketAddresses().stream().findFirst().get();
     }
 
     /**
